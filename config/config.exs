@@ -31,3 +31,5 @@ use Mix.Config
 config :remix,
   escript: true,
   silent: true
+
+import_config "dev.secret.exs"
