@@ -1,40 +1,51 @@
 defmodule DuoClient do
+  import IEx
+  use Tesla
+  plug(Tesla.Middleware.BaseUrl, "https://#{@host}")
+  plug(Tesla.Middleware.FormUrlencoded)
+
   @ikey Application.get_env(:duo_client, :settings)[:ikey]
   @skey Application.get_env(:duo_client, :settings)[:skey]
   @host Application.get_env(:duo_client, :settings)[:host]
 
-  def check do
-    path = "/auth/v2/check"
-    signature = build_authorization("POST", path, "")
-    HTTPoison.get!("https://#{@host}#{path}", headers(signature))
+  def ping do
+    get("/auth/v2/ping")
   end
 
+  def check do
+    path = "/auth/v2/check"
+
+    path
+    |> build_authorization("GET", "")
+    |> client()
+    |> get(path)
+  end
+
+  # identifier must be EITHER username or user_id
   def preauth(identifier, ipaddr \\ "", trusted_device_token \\ "") do
     path = "/auth/v2/preauth"
-    params = identifier
-    signature = build_authorization("POST", path, params)
-    resp = HTTPoison.post!("https://#{@host}#{path}", params, headers(signature))
+
+    path
+    |> build_authorization("POST", identifier)
+    |> client()
+    |> post(path, identifier)
   end
 
   def auth(identifier \\ "", factor \\ "") do
     path = "/auth/v2/auth"
     params = identifier
-    signature = build_authorization("POST", path, params)
+    signature = build_authorization(path, "POST", params)
 
-    HTTPoison.post!(
-      "https://#{@host}#{path}",
-      params,
-      headers(signature),
-      timeout: 50_000,
-      recv_timeout: 50_000
-    )
+    path
+    |> build_authorization("POST", identifier)
+    |> client()
+    |> post(path, identifier)
   end
 
   def headers(signature) do
     [
       {"Date", date_now()},
-      {"Authorization", "Basic #{signature}"},
-      {"Content-Type", "application/x-www-form-urlencoded"}
+      {"Authorization", "Basic #{signature}"}
     ]
   end
 
@@ -43,7 +54,7 @@ defmodule DuoClient do
     date
   end
 
-  def build_authorization(method, path, params) do
+  def build_authorization(path, method, params) do
     "#{@ikey}:#{auth_hash(method, path, params)}"
     |> Base.encode64()
   end
@@ -53,5 +64,11 @@ defmodule DuoClient do
 
     :crypto.hmac(:sha, @skey, request)
     |> Base.encode16()
+  end
+
+  def client(signature) do
+    Tesla.build_client([
+      {Tesla.Middleware.Headers, headers(signature)}
+    ])
   end
 end
