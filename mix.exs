@@ -19,7 +19,7 @@ defmodule Duo.MixProject do
   end
 
   defp applications(:dev), do: applications(:all) ++ [:remix]
-  defp applications(_all), do: [:logger, :httpoison, :timex]
+  defp applications(_all), do: [:logger, :timex]
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
