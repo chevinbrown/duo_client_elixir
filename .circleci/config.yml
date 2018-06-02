@@ -1,0 +1,11 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/elixir:1.4
+
+    working_directory: ~/duo_client
+    steps:
+      - checkout
+      - run: mix deps.get --only test
+      - run: mix test
