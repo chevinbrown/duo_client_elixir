@@ -1,8 +1,9 @@
 defmodule DuoClient do
-  import IEx
   use Tesla
+
   plug(Tesla.Middleware.BaseUrl, "https://#{@host}")
   plug(Tesla.Middleware.FormUrlencoded)
+  plug(Tesla.Middleware.DecodeJson)
 
   @ikey Application.get_env(:duo_client, :settings)[:ikey]
   @skey Application.get_env(:duo_client, :settings)[:skey]
@@ -21,25 +22,35 @@ defmodule DuoClient do
     |> get(path)
   end
 
-  # identifier must be EITHER username or user_id
   def preauth(identifier, ipaddr \\ "", trusted_device_token \\ "") do
     path = "/auth/v2/preauth"
 
-    path
-    |> build_authorization("POST", identifier)
-    |> client()
-    |> post(path, identifier)
+    case Preauth.check_params(identifier, ipaddr, trusted_device_token) do
+      {:ok, params} ->
+        path
+        |> build_authorization("POST", params)
+        |> client()
+        |> post(path, params)
+
+      {:error, resp} ->
+        {:error, resp}
+    end
   end
 
-  def auth(identifier \\ "", factor \\ "") do
+  # For now, only support "Push" factor
+  def auth(identifier, factor \\ "PUSH", device, ipaddr \\ "", async \\ 0) do
     path = "/auth/v2/auth"
-    params = identifier
-    signature = build_authorization(path, "POST", params)
 
-    path
-    |> build_authorization("POST", identifier)
-    |> client()
-    |> post(path, identifier)
+    case Auth.check_params(identifier, factor, device, ipaddr, async) do
+      {:ok, params} ->
+        path
+        |> build_authorization("POST", params)
+        |> client()
+        |> post(path, params)
+
+      {:error, resp} ->
+        {:error, resp}
+    end
   end
 
   def headers(signature) do
