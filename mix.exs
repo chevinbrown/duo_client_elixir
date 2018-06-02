@@ -24,6 +24,7 @@ defmodule Duo.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:jason, ">= 1.0.0"},
       {:remix, "~> 0.0.1", only: :dev},
       {:tesla, "1.0.0-beta.1"},
       {:timex, "~> 3.1"}
