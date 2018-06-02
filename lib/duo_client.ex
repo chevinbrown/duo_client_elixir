@@ -27,10 +27,28 @@ defmodule DuoClient do
 
     case Preauth.check_params(identifier, ipaddr, trusted_device_token) do
       {:ok, params} ->
-        path
-        |> build_authorization("POST", params)
-        |> client()
-        |> post(path, params)
+        {:ok, resp} =
+          path
+          |> build_authorization("POST", params)
+          |> client()
+          |> post(path, params)
+
+        case resp.body["response"]["result"] do
+          "auth" ->
+            {:ok, :auth, resp.body["response"]}
+
+          "allow" ->
+            {:ok, :allow, resp.body["response"]}
+
+          "deny" ->
+            {:ok, :deny, resp.body["response"]}
+
+          "enroll" ->
+            {:ok, :enroll, resp.body["response"]}
+
+          _ ->
+            {:error, "Preauth Client Error"}
+        end
 
       {:error, resp} ->
         {:error, resp}
@@ -43,10 +61,13 @@ defmodule DuoClient do
 
     case Auth.check_params(identifier, factor, device, ipaddr, async) do
       {:ok, params} ->
-        path
-        |> build_authorization("POST", params)
-        |> client()
-        |> post(path, params)
+        {:ok, resp} =
+          path
+          |> build_authorization("POST", params)
+          |> client()
+          |> post(path, params)
+
+        {:ok, resp.body}
 
       {:error, resp} ->
         {:error, resp}
