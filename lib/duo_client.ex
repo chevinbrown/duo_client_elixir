@@ -67,7 +67,16 @@ defmodule DuoClient do
           |> client()
           |> post(path, params)
 
-        {:ok, resp.body}
+        case resp.body["response"]["result"] do
+          "allow" ->
+            {:ok, resp.body["response"]}
+
+          "deny" ->
+            {:deny, resp.body["response"]}
+
+          _ ->
+            {:error, resp.body["response"]}
+        end
 
       {:error, resp} ->
         {:error, resp}
