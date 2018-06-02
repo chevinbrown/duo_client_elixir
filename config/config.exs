@@ -32,4 +32,4 @@ config :remix,
   escript: true,
   silent: true
 
-import_config "dev.secret.exs"
+import_config "#{Mix.env()}.exs"
