@@ -2,10 +2,22 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/elixir:1.4
-
+      - image: circleci/elixir:1.6
+        environment:
+          MIX_ENV: test
     working_directory: ~/duo_client
     steps:
+      - restore_cache:
+          keys:
+            - v1-dependency-cache-{{ checksum "mix.lock" }}
+            - v1-dependency-cache
+      - run: mix local.hex --force && mix local.rebar --force
       - checkout
-      - run: mix deps.get --only test
+      - run: mix deps.get
       - run: mix test
+      - save_cache:
+          key: v1-dependency-cache-{{ checksum "mix.lock" }}
+          paths:
+            - _build
+            - deps
+            - ~/.mix
