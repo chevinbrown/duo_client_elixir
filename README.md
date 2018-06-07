@@ -1,6 +1,6 @@
 # DuoClient
 
-**TODO: Add description**
+The elixir connector for the Duo Authentication API.
 
 ## Installation
 
@@ -15,7 +15,8 @@ def deps do
 end
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/duo_client](https://hexdocs.pm/duo_client).
+## Usage
 
+## License
+
+The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
