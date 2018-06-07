@@ -22,10 +22,10 @@ defmodule DuoClient do
     |> get(path)
   end
 
-  def preauth(identifier, ipaddr \\ "", trusted_device_token \\ "") do
+  def preauth(%Preauth{} = preauth_params) do
     path = "/auth/v2/preauth"
 
-    case Preauth.check_params(identifier, ipaddr, trusted_device_token) do
+    case Preauth.build_params(preauth_params) do
       {:ok, params} ->
         {:ok, resp} =
           path
@@ -56,10 +56,10 @@ defmodule DuoClient do
   end
 
   # For now, only support "Push" factor
-  def auth(identifier, factor \\ "PUSH", device, ipaddr \\ "", async \\ 0) do
+  def auth(preauth_params, factor_params) do
     path = "/auth/v2/auth"
 
-    case Auth.check_params(identifier, factor, device, ipaddr, async) do
+    case Auth.build_params(preauth_params, factor_params) do
       {:ok, params} ->
         {:ok, resp} =
           path
@@ -75,7 +75,7 @@ defmodule DuoClient do
             {:deny, resp.body["response"]}
 
           _ ->
-            {:error, resp.body["response"]}
+            {:error, resp}
         end
 
       {:error, resp} ->
