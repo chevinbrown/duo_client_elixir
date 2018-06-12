@@ -80,6 +80,9 @@ defmodule DuoClient do
 
       {:error, resp} ->
         {:error, resp}
+
+      {:error, :malformed_params, message} ->
+        {:error, :malformed_params, message}
     end
   end
 
