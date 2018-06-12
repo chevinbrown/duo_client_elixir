@@ -5,7 +5,7 @@ defmodule Duo.MixProject do
     [
       app: :duo_client,
       description: "Duo Authentication Api Client",
-      version: "0.0.1-beta.1",
+      version: "0.0.1-beta.2",
       elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
