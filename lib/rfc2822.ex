@@ -1,4 +1,5 @@
 defmodule Rfc2282 do
+  @moduledoc false
   def current_timestamp do
     {{year, month, day}, {hour, minute, second}} = nowtime()
     day_of_week = :calendar.day_of_the_week(year, month, day)
