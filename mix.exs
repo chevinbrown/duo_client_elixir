@@ -35,7 +35,7 @@ defmodule Duo.MixProject do
     [
       {:jason, ">= 1.0.0"},
       {:remix, "~> 0.0.1", only: :dev},
-      {:tesla, "1.0.0-beta.1"}
+      {:tesla, "1.0.0"}
     ]
   end
 end
