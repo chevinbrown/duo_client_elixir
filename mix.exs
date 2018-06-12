@@ -4,10 +4,11 @@ defmodule Duo.MixProject do
   def project do
     [
       app: :duo_client,
-      version: "0.1.0",
+      version: "0.0.1-beta.1",
       elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      package: package()
     ]
   end
 
@@ -20,6 +21,14 @@ defmodule Duo.MixProject do
 
   defp applications(:dev), do: applications(:all) ++ [:remix]
   defp applications(_all), do: [:logger]
+
+  defp package do
+    [
+      maintainers: ["chevinbrown"],
+      licenses: ["MIT"],
+      links: %{"GitHub" => "https://github.com/chevinbrown/duo_client_elixir"}
+    ]
+  end
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
