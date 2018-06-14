@@ -19,15 +19,14 @@ defmodule Duo.MixProject do
   end
 
   defp applications(:dev), do: applications(:all) ++ [:remix]
-  defp applications(_all), do: [:logger, :timex]
+  defp applications(_all), do: [:logger]
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
       {:jason, ">= 1.0.0"},
       {:remix, "~> 0.0.1", only: :dev},
-      {:tesla, "1.0.0-beta.1"},
-      {:timex, "~> 3.1"}
+      {:tesla, "1.0.0-beta.1"}
     ]
   end
 end
