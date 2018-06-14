@@ -91,8 +91,7 @@ defmodule DuoClient do
   end
 
   def date_now do
-    {:ok, date} = Timex.format(Timex.now(), "%a, %d %b %Y %H:%M:%S -0000", :strftime)
-    date
+    Rfc2282.current_timestamp()
   end
 
   def build_authorization(path, method, params) do
